@@ -15,3 +15,6 @@ pi@raspberrypi:~ $ ls /dev/spidev*
 We used Rasbian Jesse for this
 
 1. `ansible` - We use ansible to copy the source, build it, test it and run it
+
+## References
+[text link with title](http://ww1.microchip.com/downloads/en/DeviceDoc/21295d.pdf "MCP3008 Datasheet")

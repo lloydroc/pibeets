@@ -5,4 +5,4 @@
   - name: Copy Source
     synchronize:
       src: src/
-      dest: beetpi/src
+      dest: pibeets/src
