@@ -1,0 +1,8 @@
+---
+- hosts: 10.0.0.100
+  remote_user: pi
+  tasks:
+  - name: Copy Source
+    synchronize:
+      src: src/
+      dest: beetpi/src
