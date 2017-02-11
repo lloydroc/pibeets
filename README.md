@@ -17,4 +17,6 @@ We used Rasbian Jesse for this
 1. `ansible` - We use ansible to copy the source, build it, test it and run it
 
 ## References
-[text link with title](http://ww1.microchip.com/downloads/en/DeviceDoc/21295d.pdf "MCP3008 Datasheet")
+[MCP3008 Datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/21295d.pdf "MCP3008 Datasheet")
+[MCP3208 Datasheet for Reference](http://ww1.microchip.com/downloads/en/DeviceDoc/21298e.pdf)
+[RPi MCP3208 SPI by Derek Molloy](https://github.com/derekmolloy/exploringrpi/tree/master/chp10/tmp36)

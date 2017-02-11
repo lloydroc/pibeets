@@ -23,7 +23,7 @@ transfer(int fd, unsigned char send[], unsigned char rec[], int len)
     transfer.tx_buf = (unsigned long) send;  // the buffer for sending data
     transfer.rx_buf = (unsigned long) rec;   // the buffer for receiving data
     transfer.len = len;                      // the length of buffer
-    transfer.speed_hz = 1000;                // the speed in Hz
+    transfer.speed_hz = 135000;              // max speed is 1.35MHz, but it won't work
     transfer.bits_per_word = 8;              // bits per word
     transfer.delay_usecs = 0;                // delay in us
     transfer.cs_change = 0;                  // affects chip select after transfer

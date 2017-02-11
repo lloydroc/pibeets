@@ -6,3 +6,5 @@
     synchronize:
       src: src/
       dest: pibeets/src
+  - name: Build on the Raspberry Pi
+    command: make -C pibeets/src
