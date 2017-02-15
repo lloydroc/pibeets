@@ -3,64 +3,55 @@
 #include<unistd.h>
 #include<sys/ioctl.h>
 #include<stdint.h>
+#include<ctype.h>
+#include<stdlib.h>
+#include<stdarg.h>
+#include<sys/time.h>
 #include<linux/spi/spidev.h>
 #include "spibus.h"
+#include "mcp3008.h"
+#include "gpio.h"
 
-// Inspired by Derek Molloy in his
-// Exploring Raspberry Pi Book
-// http://exploringrpi.com/chapter8/
-
-
-int
-transfer(int fd, unsigned char send[], unsigned char rec[], int len)
-{
-    struct spi_ioc_transfer transfer;        // the transfer structure
-    transfer.tx_buf = (unsigned long) send;  // the buffer for sending data
-    transfer.rx_buf = (unsigned long) rec;   // the buffer for receiving data
-    transfer.len = len;                      // the length of buffer
-    transfer.speed_hz = 135000;              // max speed is 1.35MHz, but it won't work
-    transfer.bits_per_word = 8;              // bits per word
-    transfer.delay_usecs = 0;                // delay in us
-    transfer.cs_change = 0;                  // affects chip select after transfer
-    transfer.tx_nbits = 0;                   // no. bits for writing (default 0)
-    transfer.rx_nbits = 0;                   // no. bits for reading (default 0)
-    transfer.pad = 0;                        // interbyte delay - check version
-
-    // send the SPI message (all of the above fields, inc. buffers)
-    // 1 is the number of spi_ioc_transfer structs to send
-    int status = ioctl(fd, SPI_IOC_MESSAGE(1), &transfer);
-    if (status < 0) {
-        perror("SPI: SPI_IOC_MESSAGE Failed");
-        return -1;
-    }
-    return status;
+void print_timetaken(char label[], struct timeval start, struct timeval end) {
+    double usec,sec;
+    usec = (double) (end.tv_usec - start.tv_usec)/1000000;
+    sec  = (double) (end.tv_sec - start.tv_sec);
+    printf("%s: Time Taken = %f",label,sec+usec);
 }
 
 int
 main()
 {
-   int i;                              // file handle and loop counter
+    int i; // loop index
+    struct timeval t1,t2; // to time our function calls
+    // We will read 2 samples from the MCP3008 on channels 1 and 0
+    // Read in singled ended mode
+    unsigned char channels[2];
+    channels[0] = 0;
+    channels[1] = 1;
+    int sampl[2]; // where the 2 10-bit samples will go
 
-   int fd = spi_open("0.0",3,O_RDWR);
+    int fd_gpio4 = gpio_setup_output(4);
+    gpio_write(fd_gpio4,0); // Set low to start with
 
-   for (i=0; i<1; i++)
-   {
-      unsigned char send[3], receive[3];
-      send[0] = 0b00000001;     // Set start bit high
-      send[1] = 0b10000000;     // Set Single ended for channel 0
-      send[2] = 0; // not relevant but makes scope look clean
+    // We will use /dev/spidev0.0 with spi mode 3
+    int fd_spi0 = spi_open("0.0",3,O_RDWR);
+    gettimeofday(&t1,NULL);
+    gpio_write(fd_gpio4,1); // Set hi for SPI portion
+    if(read_mcp3008(fd_spi0,channels,sampl,2,0)!=0) {
+        perror("Failed to transfer bytes");
+        return EXIT_FAILURE;
+    }
+    gpio_write(fd_gpio4,0);
+    gettimeofday(&t2,NULL);
 
-      // This function can send and receive data, just sending now
-      if (transfer(fd, send, receive, 3)==-1){
-         perror("Failed to transfer bytes");
-         return -1;
-      }
-      receive[1] &= 0b00000011; // We only get 10-bits mask off the 6
-      int val = (receive[1]<<8)|receive[2];
-      printf("Data Received: %d\n", val);
-      fflush(stdout);       // need to flush the output, no \n
-      usleep(500000);       // sleep for 500ms each loop
-   }
-   close(fd);               // close the file
-   return 0;
+    print_timetaken("Read 2 Samples",t1,t2);
+
+    // Print the data
+    for(i=0; i<1; i++) {
+        printf("Channel[%d]: %d\n",i,sampl[i]);
+    }
+    gpio_close(fd_gpio4,4);
+    close(fd_spi0);               // close the file
+    return EXIT_SUCCESS;
 }
