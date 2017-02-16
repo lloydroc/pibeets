@@ -1,10 +1,13 @@
 #include "mcp3008.h"
+#include<sys/time.h>
+#include "util.h"
 
 int
 transfer(int fd, unsigned char send[], unsigned char rec[], int len);
 
 int
 read_mcp3008(int fd, const unsigned char channels[], int sampl[], int n_sampl, int diff_pair) {
+    struct timeval t1,t2; // to time our function calls
     int i; // loop index
     // The send buffer to grab each sample is 24-bit
     int len = n_sampl*3;
@@ -15,15 +18,20 @@ read_mcp3008(int fd, const unsigned char channels[], int sampl[], int n_sampl, i
 
     // Only way to understand this code is to consult the
     // MCP3008 Datasheet on the timing diagram to a microcontroller
+    // We effectively need the bits to be shifted in the right
+    // place for start, single ended/diff and channel
     for(i=0;i<n_sampl;i++) {
-        send[3*i+0] = 0b00000001; // Start bit for each transfer
-        send[3*i+1] = channels[i];    // Channel we're sending to
-        send[3*i+1] <<= 4;        // Shift up to align
+        send[3*i+0] = 0b00000001;  // Start bit for each transfer
+        send[3*i+1] = channels[i]; // Channel we're sending to
+        send[3*i+1] <<= 4;         // Shift up to align
         if(diff_pair == 0) send[3*i+1] |= 0b10000000;
     }
 
-    // Tranfer data in/out of the SPI bus
+    // Data IO from the SPI Bus
+    gettimeofday(&t1,NULL);
     ret = transfer(fd,send,rec,len);
+    gettimeofday(&t2,NULL);
+    print_timetaken("SPI Transfer Time",t1,t2);
 
     // format the data back into 10-bit values
     for(i=0;i<n_sampl;i++) {

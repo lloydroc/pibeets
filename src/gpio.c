@@ -13,7 +13,7 @@ gpio_setup_output(int gpio) {
     strcpy(path,GPIO_PATH);
     strcat(path,"export");
     sprintf(val,"%d",gpio);
-    printf("gpio_output: %s %s",path,val);
+    printf("gpio_setup_output: %s %s\n",path,val);
     fd = open(path,O_WRONLY);
     if(fd == -1) {
         fprintf(stderr,"Exception exporting GPIO %d",gpio);
@@ -33,7 +33,7 @@ gpio_setup_output(int gpio) {
     sprintf(val,"%d/direction",gpio);
     strcat(path,val);
     strcpy(val,"output");
-    printf("gpio_output: %s %s",path,val);
+    printf("gpio_setup_output: %s %s\n",path,val);
     fd = open(path,O_WRONLY);
     if(fd == -1) {
         fprintf(stderr,"Exception setting direction on GPIO %d",gpio);
@@ -41,7 +41,7 @@ gpio_setup_output(int gpio) {
     }
     write(fd,val,strlen(val));
     close(fd);
- 
+
     // For example open file
     // /sys/class/gpio/gpio4/value
     // we will use gpio_write to
@@ -50,7 +50,7 @@ gpio_setup_output(int gpio) {
     sprintf(val,"%d/value",gpio);
     strcat(path,val);
 
-    printf("gpio_open: %s",path);
+    printf("gpio_setup_output: %s\n",path);
     fd = open(path,O_WRONLY);
     if(fd == -1) {
         fprintf(stderr,"Exception opening GPIO value %d",gpio);
@@ -73,7 +73,7 @@ gpio_open(int gpio) {
     sprintf(val,"%d/value",gpio);
     strcat(path,val);
 
-    printf("gpio_open: %s",path);
+    printf("gpio_open: %s\n",path);
     fd = open(path,O_WRONLY);
     if(fd == -1) {
         fprintf(stderr,"Exception opening GPIO %d",gpio);
@@ -103,7 +103,7 @@ gpio_close(int fd, int gpio) {
     // 4
     strcpy(path,GPIO_PATH);
     strcat(path,"unexport");
-    printf("gpio_close: %s %d",path,gpio);
+    printf("gpio_close: %s %d\n",path,gpio);
     fd = open(path,O_WRONLY);
     if(fd == -1) {
         fprintf(stderr,"Exception unexporting GPIO %d",gpio);
