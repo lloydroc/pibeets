@@ -6,7 +6,7 @@
 #include<linux/spi/spidev.h>
 #include "spibus.h"
 
-#define SPI_TRANSFER_SPEED_HZ 3900000
+#define SPI_TRANSFER_SPEED_HZ 1350000
 
 // Read from SPI Bus /dev/spidev0.0
 // fd will be a file descriptor obtained

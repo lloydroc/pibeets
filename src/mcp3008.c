@@ -56,7 +56,7 @@ transfer(int fd, unsigned char send[], unsigned char rec[], int len)
     transfer.tx_buf = (unsigned long) send;    // the buffer for sending data
     transfer.rx_buf = (unsigned long) rec;     // the buffer for receiving data
     transfer.len = len;                        // the length of buffer
-    transfer.speed_hz = SPI_TRANSFER_SPEED_HZ; // max speed is 1.35MHz, but it won't work
+    transfer.speed_hz = SPI_TRANSFER_SPEED_HZ; // max speed is 1.35MHz for MCP3008 @ 3.3V, but it won't work
     transfer.bits_per_word = 8;                // bits per word
     transfer.delay_usecs = 0;                  // delay in us
     transfer.cs_change = 0;                    // affects chip select after transfer

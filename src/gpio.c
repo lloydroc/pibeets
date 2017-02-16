@@ -19,27 +19,33 @@ gpio_setup_output(int gpio) {
         fprintf(stderr,"Exception exporting GPIO %d",gpio);
         return -1;
     }
-    write(fd,val,strlen(val)); // TODO will integer work or does it need to be string
+    if(write(fd,val,strlen(val))<0) {
+        perror("GPIO: Unable to set output");
+    }
     close(fd);
 
-    // Not sure why
+    // After we export the pin the
+    // driver will create a new directory
+    // for us in /sys/class/gpio/gpio%d
     usleep(100000);
 
     // For example open file
     // /sys/class/gpio/gpio4/direction
     // and write
-    // "output"
+    // "out"
     strcpy(path,GPIO_PIN_PATH);
     sprintf(val,"%d/direction",gpio);
     strcat(path,val);
-    strcpy(val,"output");
+    strcpy(val,"out");
     printf("gpio_setup_output: %s %s\n",path,val);
     fd = open(path,O_WRONLY);
     if(fd == -1) {
         fprintf(stderr,"Exception setting direction on GPIO %d",gpio);
         return -1;
     }
-    write(fd,val,strlen(val));
+    if(write(fd,val,strlen(val))<0) {
+        perror("GPIO: Unable to setup output");
+    }
     close(fd);
 
     // For example open file
@@ -84,12 +90,20 @@ gpio_open(int gpio) {
 
 int
 gpio_write(int fd, int val) {
-    return write(fd,&val,1);
+    char cval[4];
+    sprintf(cval,"%d",val);
+    printf("gpio_write: %s\n",cval);
+    int ret = write(fd,cval,strlen(cval));
+    if(ret<0)
+        perror("GPIO: unable to perform gpio write");
+    return ret;
 }
 
 int
 gpio_close(int fd, int gpio) {
     char path[64];
+    char val[64];
+    sprintf(val,"%d",gpio);
 
     // close the previously opened fd
     if(close(fd)!=0) {
@@ -109,6 +123,8 @@ gpio_close(int fd, int gpio) {
         fprintf(stderr,"Exception unexporting GPIO %d",gpio);
         return -1;
     }
-    write(fd,&gpio,1); // TODO will integer work or does it need to be string
+    if(write(fd,val,strlen(val))<0) {
+        perror("GPIO: Unable to unexport gpio");
+    };
     return close(fd);
 }
