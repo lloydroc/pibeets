@@ -31,7 +31,7 @@ main()
     gpio_write(fd_gpio4,0); // Set low to start with
 
     // We will use /dev/spidev0.0 with spi mode 3
-    int fd_spi0 = spi_open("0.0",3,O_RDWR);
+    int fd_spi0 = spi_open("0.0",3,SPI_TRANSFER_SPEED_HZ,O_RDWR);
 
     for(j=0;j<10;j++) {
         gettimeofday(&t1,NULL);

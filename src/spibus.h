@@ -12,9 +12,10 @@
 // dev is for example 0.0 in which /dev/spidev will be prepended
 // mode is SPIMODE type see
 //   https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Mode_numbers
+// speed_hz is the speed for the writing and reading
 // oflag is O_RDONLY, O_WRONLY, O_RDWR defined in fnctl.h
 // returns a file descriptor to the device or -1 on error
 int
-spi_open(const char dev[], int mode, int oflag);
+spi_open(const char dev[], int mode, int speed_hz, int oflag);
 
 #endif

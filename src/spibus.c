@@ -8,7 +8,7 @@
 #include "spibus.h"
 
 int
-spi_open(const char dev[], int mode, int oflag)
+spi_open(const char dev[], int mode, int speed_hz, int oflag)
 {
     int fd;
     char spidev[80];
@@ -31,6 +31,14 @@ spi_open(const char dev[], int mode, int oflag)
             perror("SPI: Can't get SPI read mode.");
             return -1;
         }
+    }
+    if (ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed_hz)==-1){
+        perror("SPI: Can't set max speed Hz");
+        return -1;
+    }
+    if (ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed_hz)==-1){
+        perror("SPI: Can't get max speed Hz.");
+        return -1;
     }
     return fd;
 }

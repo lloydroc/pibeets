@@ -1,4 +1,5 @@
 #include "util.h"
+#include <stdio.h>
 
 void print_timetaken(char label[], struct timeval start, struct timeval end) {
     double usec,sec;
