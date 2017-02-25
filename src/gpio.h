@@ -18,7 +18,6 @@
 // int fd = gpio_setup_output(4);
 // gpio_write(fd,1);
 // gpio_close(fd,4);
-// fclose(fd);
 
 // Setup a GPIO Pin
 // see pinout.xyz the gpio pin isn't
