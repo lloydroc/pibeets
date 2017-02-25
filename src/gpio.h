@@ -16,7 +16,7 @@
 //
 // For example to write to gpio4
 // int fd = gpio_setup_output(4);
-// gpio_write(1);
+// gpio_write(fd,1);
 // gpio_close(fd,4);
 // fclose(fd);
 
